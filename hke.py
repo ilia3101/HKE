@@ -53,9 +53,8 @@ def plot_patches(FileName, PatchesXYZ, BackgroundColour):
 ##################################################################################################
 # Implementation of "Simple Estimation Methods forthe Helmholtz – Kohlrausch Effect" by Nayatani
 
-# I have implemented the VCC method, as it is "more useful than the VAC method in practical visual photometry"
-# Specifically, the 'luminous colours' variant, although I'm not 100.0% sure about the difference
-# between 'object colours' and 'luminous colours'...
+# I have implemented both the VCC and VAC method, Specifically, the 'luminous colours' variant,
+# although I'm not 100.0% sure about the difference between 'object colours' and 'luminous colours'...
 
 #CIE C white point in u' v' coordinates
 # u_c = 
