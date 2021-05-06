@@ -9,6 +9,6 @@ All the patches in the above image have the same Y luminance value as the backgr
 
 ### Same image, but HKE compensated for:
 ![HKE demo](/images/HKE_compensated.png)
-Here I have tried to compensate for the HKE effect using the VCC for luminous colours from Nayatani. I would say it has overcompensated, as the red looks too dark to me.
+Here I have tried to compensate for the HKE effect using the VCC for luminous colours from Nayatani. I would say it has overcompensated, as the red, purple and blue all look too dark to me.
 
 This code is a work in progress.
