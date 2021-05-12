@@ -61,48 +61,60 @@ def plot_patches(FileName, PatchesXYZ, BackgroundColour):
 
 #Theta of hue
 def q(theta):
-    return (- 0.01585
+    return( - 0.01585
             - 0.03017*math.cos(theta) - 0.04556*math.cos(2*theta)
             - 0.02667*math.cos(3*theta) - 0.00295*math.cos(4*theta)
             + 0.14592*math.sin(theta) + 0.05084*math.sin(2*theta)
-            - 0.01900*math.sin(3*theta) - 0.00764*math.sin(4*theta))
+            - 0.01900*math.sin(3*theta) - 0.00764*math.sin(4*theta) )
 
 #KBr is normalized to sunity at La 63.66cd/m2
-La = 200 #Luminance adapting, set to 200 here to represent a display at medium brightness i guess
-K_Br = 0.2717 * (6.469 + 6.362 * pow(La, 0.4495)) / (6.469 + pow(La, 0.4495))
+La = 65 #Luminance adapting
+K_Br = 0.2717 * (6.469 + 6.362*pow(La, 0.4495)) / (6.469 + pow(La, 0.4495))
 
 def s(uv, uv_C):
-    return 13*pow((uv[0]-uv_C[0])**2 + (uv[1]-uv_C[1])**2,0.5)
+    u = uv[0]-uv_C[0]
+    v = uv[1]-uv_C[1]
+    return 13*pow(pow(u,2) + pow(v,2),0.5)
 
-def VAC(x, y):
-    uv = colour.xy_to_Luv_uv([x,y])
-    C = colour.xy_to_Luv_uv([0.31006,0.31616])
-    theta = math.atan((uv[0]-C[0]) / (uv[1]-C[1]))
-    return 0.4462 * pow(1.0 + (-0.1340*q(theta) + 0.0872*K_Br) * s(uv, C) + 0.3086, 3)
+def VAC(xy, xy_wp):
+    uv = colour.xy_to_Luv_uv(xy)
+    wp = colour.xy_to_Luv_uv(xy_wp)
+    theta = math.atan2(uv[1]-wp[1], uv[0]-wp[0])
+    return 0.4462 * pow(1.0 + (-0.1340*q(theta) + 0.0872*K_Br)*s(uv, wp) + 0.3086, 3)
 
-def VCC(x, y):
-    uv = colour.xy_to_Luv_uv([x,y])
-    C = colour.xy_to_Luv_uv([0.31006,0.31616])
-    theta = math.atan2(uv[1]-C[1], uv[0]-C[0])
-    return 0.4462 * pow(1.0 + (-0.8660*q(theta) + 0.0872*K_Br)*s(uv, C) + 0.3086, 3)
+def VCC(xy, xy_wp):
+    uv = colour.xy_to_Luv_uv(xy)
+    wp = colour.xy_to_Luv_uv(xy_wp)
+    theta = math.atan2(uv[1]-wp[1], uv[0]-wp[0])
+    return 0.4462 * pow(1.0 + (-0.8660*q(theta) + 0.0872*K_Br)*s(uv, wp) + 0.3086, 3)
+
+def VCC_VAC(xy, xy_wp, weight):
+    return (VCC(xy,xy_wp)*(1.0-weight) + VAC(xy,xy_wp)*weight)
+
+wp_C = [0.31006,0.31616]
+wp_D65 = [0.31271,0.32902]
 
 ##################################################################################################
 
 grey_colour = colour.notation.RGB_to_HEX([Y_sRGB,Y_sRGB,Y_sRGB])
 
-plot_patches("equal_Y.png", patches_XYZ, grey_colour)
+plot_patches("images/equal_Y.png", patches_XYZ, grey_colour)
 
+weight_vcc_vac = 0.5
 
+whitepoint=wp_C
 bg_xy = colour.XYZ_to_xy(colour.sRGB_to_XYZ([Y_sRGB,Y_sRGB,Y_sRGB]))
-bg_vcc = VCC(bg_xy[0], bg_xy[1])
+bg_vcc = VCC_VAC(bg_xy, whitepoint, weight_vcc_vac)
+
+print("BG fac = " + str(bg_vcc))
 
 #Try to compensate the patches
 for i in range (0,len(patches_XYZ)):
     patch = patches_XYZ[i]
-    in_xy = colour.XYZ_to_xy(patch)
-    Leq_L = VCC(in_xy[0], in_xy[1])
+    patch_xy = colour.XYZ_to_xy(patch)
+    Leq_L = VCC_VAC(patch_xy, whitepoint, weight_vcc_vac)
     fac = bg_vcc/Leq_L
     print("Luminance factor for patch " + str(i) + " = " + str(fac))
-    patch *= fac
+    patch *= pow(fac,1)
 
-plot_patches("HKE_compensated.png", patches_XYZ, grey_colour)
+plot_patches("images/HKE_compensated.png", patches_XYZ, grey_colour)
