@@ -1,5 +1,7 @@
+## I have moved this work over to [here](https://github.com/colour-science/colour/pull/824).
+
 # Helmholtz-Kohlrausch effect
-Here I am implementing "Simple Estimation Methods for the Helmholtz – Kohlrausch Effect" by Nayatani to see what can be done about it. I am almost certain the implementation is not correct.
+Here I am implementing "Simple Estimation Methods for the Helmholtz – Kohlrausch Effect" by Nayatani to see what can be done about it.
 
 Running the code generates the following images:
 
