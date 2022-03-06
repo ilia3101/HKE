@@ -11,6 +11,6 @@ All of the patches in this image have the same Y (luminance) value as the backgr
 
 This shows that luminance is not equal to brightness.
 
-### Same image, but HKE compensated for:
+### Same image, but attempting to match brightness by compensating for HKE:
 ![HKE demo](/images/HKE_compensated.png)
 Here I have tried to compensate for the HKE effect using the VCC for luminous colours model from Nayatani. I would say it has overcompensated, as the red, purple and blue look slightly too dark to me.
